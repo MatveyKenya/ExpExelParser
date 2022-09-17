@@ -1,17 +1,12 @@
 package Util;
 
-import Entity.Order;
+import Repository.AppConfig;
 import Repository.OrderRepository;
-
 import java.sql.*;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class DbConnector {
-    final private String dbUser = "postgres";
-    final private String dbPassword ="0123";
-    final private String url = "jdbc:postgresql://localhost:5432/elf";
+
     final private Connection con;
     final private Statement st;
 
@@ -35,7 +30,9 @@ public class DbConnector {
 
     //конструктор
     public DbConnector() throws SQLException {
-        con = DriverManager.getConnection(url, dbUser, dbPassword);
+        final var cfg = AppConfig.getInstance();
+        assert cfg != null;
+        con = DriverManager.getConnection(cfg.getDbUrl(), cfg.getDbUser(), cfg.getDbPassword());
         st = con.createStatement();
     }
 

@@ -1,4 +1,6 @@
 import Entity.Order;
+import Repository.AppConfig;
+import Repository.OrderRepository;
 import Util.DbConnector;
 import Util.MyParserOrder1cXLS;
 
@@ -8,11 +10,29 @@ import java.util.List;
 public class Main {
 
     public static void main(String... args){
-        List<Order> orderList = MyParserOrder1cXLS.parse("отчеты 1с по июнь.xls");
+
+        AppConfig cfg = AppConfig.getInstance();
+        assert cfg != null;
+
+        List<Order> orderList = MyParserOrder1cXLS.parse(cfg.getFile1Cxls());
+
+
         try {
 
             var db = new DbConnector();
-            //System.out.println("Внесено записей " + db.insertNewOrder(orderList.get(5)));
+            var repo = new OrderRepository(db);
+            System.out.println("заказы в базе " + repo.getOrderAll());
+
+            System.out.println("всего сохранено в базе заказов - " + repo.saveAfterParsing(orderList));
+
+            System.out.println("заказы в базе " + repo.getOrderAll());
+
+//            Order order = repo.getOrderById("330-322");
+//            System.out.println(order);
+//            order.setName("name");
+//            order.setNumberId("894-622");
+//            System.out.println(repo.save(order));
+
             db.closeConnection();
 
         } catch (SQLException throwables) {

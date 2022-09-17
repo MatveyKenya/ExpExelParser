@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>global app properties</comment>
+
+    <!-- db connection -->
+    <entry key="dbUser">postgres</entry>
+    <entry key="dbPassword">0123</entry>
+    <entry key="dbUrl">jdbc:postgresql://localhost:5432/elf</entry>
+
+    <entry key="globalPathToScan">D:/elf/Сканы</entry>
+    <entry key="file1Cxls">D:/elf/Отчеты 1С/отчет 1с.xls</entry>
+
+    <!-- вводить города через ',' без пробелов!!! -->
+    <entry key="listNorthKeyWords">Сургут,Нижневартовск</entry>
+
+
+</properties>

@@ -1,6 +1,7 @@
 package Util;
 
 import Entity.Order;
+import Repository.AppConfig;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -18,16 +19,14 @@ import java.util.List;
 
 public class MyParserOrder1cXLS {
 
-    public static void main(String[] args) {
-        MyParserOrder1cXLS.parse("отчеты 1с по июнь.xls").forEach(System.out::println);
-    }
+    final private static AppConfig cfg = AppConfig.getInstance();
 
-    public static List<Order> parse(String name) {
+    public static List<Order> parse(String fileNameFull) {
 
         final InputStream in;
         HSSFWorkbook wb = null;
         try {
-            in = new FileInputStream(name);
+            in = new FileInputStream(fileNameFull);
             wb = new HSSFWorkbook(in);
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,14 +58,18 @@ public class MyParserOrder1cXLS {
                     if (cell != null
                             && cell.getCellType() == CellType.STRING
                             && Order.isNumberOrder1cFormat(cell.getStringCellValue())){
+                        String address = getStringFromCell(row.getCell(4));
+                        Order.OrderType orderType = getOrderType(address);
                         Order order = Order.builder()
                                 .numberId(cell.getStringCellValue())
                                 .date(date)
+                                .dateGot(date)
                                 .name(getStringFromCell(row.getCell(3)))
-                                .address(getStringFromCell(row.getCell(4)))
+                                .address(address)
                                 .tel(getStringFromCell(row.getCell(5)))
                                 .fio1c(getStringFromCell(row.getCell(6)))
                                 .surname(getStringFromCell(row.getCell(6)).split(" ")[0])
+                                .type(orderType)
                                 .build();
 
                         list.add(order);
@@ -92,6 +95,23 @@ public class MyParserOrder1cXLS {
             }
         }
         return "???";
+    }
+
+    private static Order.OrderType getOrderType(String address){
+        // на основе анализа адреса если Сургут, Нижневартовск
+        // и прочие северные локации то
+        // тип NORTH должен быть
+        //if (address.con)
+        return isNorthAddress(address) ? Order.OrderType.NORTH : Order.OrderType.CHEL;
+    }
+
+    private static boolean isNorthAddress(String address){
+        for (String item: cfg.getListNorthKeyWords()){
+            if (address.contains(item)){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
