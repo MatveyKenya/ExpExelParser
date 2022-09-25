@@ -13,6 +13,7 @@ import java.util.List;
 public class OrderRepository{
 
     final private DbConnector db;
+    final private FileRepository fileRepo = new FileRepository();
 
     public OrderRepository(@NonNull DbConnector db) {
         this.db = db;
@@ -20,6 +21,7 @@ public class OrderRepository{
 
     //----PUBLIC--------------------------------------------
 
+    // можно использовать только в тестах - при минимальном заполнении базы
     public List<Order> getOrderAll(){
         return getOrderList("select * from \"order\";");
     }
@@ -31,6 +33,9 @@ public class OrderRepository{
                 list.get(0) : null;
     }
 
+    /**
+     * сохранялка для полного набора данных заказа
+     */
     public int save(Order order){
         return save(order, false);
     }
@@ -45,6 +50,7 @@ public class OrderRepository{
         int result = 0;
         for (Order order: orderList){
             if (save(order, true) > 0){
+                System.out.println(fileRepo.getFullFileJpgName(order));
                 result++;
             }
         }
@@ -62,9 +68,9 @@ public class OrderRepository{
     private int save(Order order, boolean onlyDateUpdate){
         Order orderInDb = getOrderById(order.getNumberId());
         if (orderInDb == null){
-            return insertNewOrder(order); // сохраняем новый заказ в базу
+            return insertNewOrder(order); // сохраняем новый заказ в базу если нет такого
         }
-        if (onlyDateUpdate){
+        if (onlyDateUpdate){ // если заказ есть уже в базе, то обновляем только дату!!!
             Order orderWithNewDate = orderInDb.clone();
             orderWithNewDate.setDate(order.getDate());
             order = orderWithNewDate;
@@ -150,16 +156,9 @@ public class OrderRepository{
 
         int result = db.execute(query);
         if (result > 0){
-            order.removeJpg(oldOrderInDb);
+            System.out.println("Заказ " + oldOrderInDb.getFileJpgName() + " ---> Перемещено сканов: " + fileRepo.removeJpg(order, oldOrderInDb));
         }
         return result;
-//        UPDATE public."order"
-//        SET date    = '2022-05-17',
-//            name    = 'щкаф 2х',
-//            fio     = 'Иванов АСрр',
-//            tel     = '8-896-895',
-//            surname = 'Петров',
-//            address = 'Москва'
-//        WHERE id LIKE '235-548' ESCAPE '#';
+
     }
 }

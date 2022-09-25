@@ -3,9 +3,12 @@ package Entity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+/**
+ *  Заказ с уникальным номером и его параметры, даты
+ */
 
 @Builder
 @Data
@@ -64,38 +67,25 @@ public class Order implements Cloneable{
     }
 
     public String getFileJpgName(){
+        return getNumberIdForFile() + " " + surname;
+    }
+
+    public String getNumberIdForFile(){
+        String[] numbers = numberId.split("/");
+        return numbers[0] + (numbers.length == 2 ? "-" + numbers[1] : "");
+    }
+
+    // совсем неуникальный номер, как раньше "18.05 155 Иванов"
+    public String getOldFileJpgName(){
         return formatForDateDDMM.format(date) + " "
                 + numberId.split("-")[0] + " "
                 + (numberId.split("/").length == 2 ? "доз" + numberId.split("/")[1] + " " : "")
                 + fio1c.split(" ")[0];
     }
 
-    /**
-     * Перемещение файлов jpg по датам
-     * @param oldOrderInDb
-     * @return
-     */
-    public int removeJpg(Order oldOrderInDb) {
-        if (date.compareTo(oldOrderInDb.date) == 0
-                && type.equals(oldOrderInDb.type)
-                && surname.equals(oldOrderInDb.surname)){
-            return 0;
-        }
-        int result = 0;
-        // делаем допущение, что имя файла .jpg сформировано этой программой
-        // и поэтому распознано оно тоже должно быть исходя из правил именования
-
-
-
-        return result;
-    }
-
-
-
-
     @Override
     public String toString(){
-        return getFileJpgName();
+        return "\n" + getFileJpgName();
     }
 
     public String toStringAll(){

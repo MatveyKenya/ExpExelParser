@@ -1,37 +1,22 @@
-import Entity.Order;
-import Repository.AppConfig;
 import Repository.OrderRepository;
 import Util.DbConnector;
-import Util.MyParserOrder1cXLS;
+import ui.UiService;
+import ui.UiTerminal;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class Main {
 
     public static void main(String... args){
 
-        AppConfig cfg = AppConfig.getInstance();
-        assert cfg != null;
-
-        List<Order> orderList = MyParserOrder1cXLS.parse(cfg.getFile1Cxls());
-
-
         try {
 
             var db = new DbConnector();
-            var repo = new OrderRepository(db);
-            System.out.println("заказы в базе " + repo.getOrderAll());
+            var orderRepo = new OrderRepository(db);
+            var uis = new UiService(orderRepo);
+            var ui = new UiTerminal(uis);
 
-            System.out.println("всего сохранено в базе заказов - " + repo.saveAfterParsing(orderList));
-
-            System.out.println("заказы в базе " + repo.getOrderAll());
-
-//            Order order = repo.getOrderById("330-322");
-//            System.out.println(order);
-//            order.setName("name");
-//            order.setNumberId("894-622");
-//            System.out.println(repo.save(order));
+            ui.start();
 
             db.closeConnection();
 
@@ -41,9 +26,3 @@ public class Main {
     }
 
 }
-
-
-// String[] ss = {"123-322/16", "125-458", "", "154", "4/10"};
-//        for (String s : ss){
-//            System.out.println(s.strip().matches("\\d{1,4}-\\d{3,4}(/\\d{1,2})?"));
-//        }

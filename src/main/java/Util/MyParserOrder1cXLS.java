@@ -106,6 +106,7 @@ public class MyParserOrder1cXLS {
     }
 
     private static boolean isNorthAddress(String address){
+        assert cfg != null;
         for (String item: cfg.getListNorthKeyWords()){
             if (address.contains(item)){
                 return true;
