@@ -1,3 +1,4 @@
+import Repository.OperationRepository;
 import Repository.OrderRepository;
 import Util.DbConnector;
 import ui.UiService;
@@ -13,7 +14,8 @@ public class Main {
 
             var db = new DbConnector();
             var orderRepo = new OrderRepository(db);
-            var uis = new UiService(orderRepo);
+            var operationRepo = new OperationRepository(db);
+            var uis = new UiService(orderRepo, operationRepo);
             var ui = new UiTerminal(uis);
 
             ui.start();

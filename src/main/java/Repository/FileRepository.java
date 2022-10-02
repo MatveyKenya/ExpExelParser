@@ -53,8 +53,6 @@ public class FileRepository {
                 && newOrder.getSurname().equals(oldOrderInDb.getSurname())){
             return 0;
         }
-        int result = 0;
-        String newName = getFullFileJpgName(newOrder);
         String oldName = getFullFileJpgName(oldOrderInDb);
         File oldDir = new File(oldName).getParentFile();
         FileFilter filter = pathname -> pathname.getName().startsWith(oldOrderInDb.getNumberIdForFile());
@@ -65,11 +63,18 @@ public class FileRepository {
             files = oldDir.listFiles(filterOld);
         }
 
+        return removeFiles(files, newOrder);
+    }
+
+    //---private territory-----------------------------------
+
+    private int removeFiles(File[] files, Order newOrder){
+        int result = 0;
         if (files != null){
             int i=1;
             for (File file: files){
                 String iString = iToString(i);
-                File newFile = new File(newName + iString + ".jpg");
+                File newFile = new File(getFullFileJpgName(newOrder) + iString + ".jpg");
                 if (!newFile.exists()){
                     if (moveFile(file, newFile)){
                         result++;
@@ -82,8 +87,6 @@ public class FileRepository {
         }
         return result;
     }
-
-    //---private territory-----------------------------------
 
     private String iToString(int i){
         if (i <= 0){
