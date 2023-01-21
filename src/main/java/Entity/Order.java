@@ -24,7 +24,6 @@ public class Order implements Cloneable{
     private String surname; // это должно быть проверенное значение для использования в имени файла!!!
     private OrderType type;
     private OrderStage stage;
-
     private boolean enable; // существует или удален TRUE or FALSE
 
     @Override

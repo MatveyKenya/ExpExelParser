@@ -8,6 +8,7 @@ import Repository.OrderRepository;
 import Util.MyParserOrder1cXLS;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class UiService {
@@ -30,11 +31,11 @@ public class UiService {
         return orderRepo.saveAfterParsing(orderList);
     }
 
-    public Order getOrder(String numberOrder) {
-        return orderRepo.getOrderById(numberOrder);
+    public Order getOrder(String idOrder) {
+        return orderRepo.getOrderById(idOrder);
     }
 
-    public List<Operation> getOperations(String idOrder){
-        return operationRepo.getOperationByIdOrder(idOrder);
+    public Map<Integer, String> getMapOperUser(String idOrder){
+        return operationRepo.getMapOperUser(idOrder);
     }
 }
